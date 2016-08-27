@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Websockets</title>
+</head>
+<body>
+<p>
+    <input type="text" id="message">
+</p>
+<p>
+    <button id="send-message">Send message</button>
+</p>
+<script>
+    var socket = new WebSocket('ws://localhost:8001');
+
+    socket.onopen = function() {
+        console.info("Соединение установлено.");
+    };
+
+    socket.onclose = function(event) {
+        if (event.wasClean) {
+            console.info('Соединение закрыто чисто');
+        } else {
+            console.info('Обрыв соединения'); // например, "убит" процесс сервера
+        }
+        console.info('Код: ' + event.code + ' причина: ' + event.reason);
+    };
+
+    socket.onmessage = function(event) {
+        console.info("Получены данные " + event.data);
+    };
+
+    socket.onerror = function(error) {
+        console.error("Ошибка " + error.message);
+    };
+
+    var byId = document.getElementById.bind(document);
+    var message = byId('message');
+    var sendMessageBtn = byId('send-message');
+
+    activate();
+
+    function activate() {
+        sendMessageBtn.addEventListener('click', sendMessage);
+    }
+
+    function sendMessage() {
+        socket.send(message.value);
+    }
+</script>
+</body>
+</html>
